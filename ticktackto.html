@@ -23,11 +23,76 @@
       const $table = document.createElement("table");
       const $result = document.createElement("div");
       const rows = [];
+
       let turn = "O";
+
+      const checkWinner = (target) => {
+        let rowIndex;
+        let cellIndex;
+        rows.forEach((row, ri) => {
+          row.forEach((cell, ci) => {
+            if (cell === target) {
+              rowIndex = ri;
+              cellIndex = ci;
+            }
+          });
+        });
+        let hasWinner = false;
+        if (
+          rows[rowIndex][0].textContent === turn &&
+          rows[rowIndex][1].textContent === turn &&
+          rows[rowIndex][2].textContent === turn
+        ) {
+          hasWinner = true;
+        }
+
+        if (
+          rows[0][cellIndex].textContent === turn &&
+          rows[1][cellIndex].textContent === turn &&
+          rows[2][cellIndex].textContent === turn
+        ) {
+          hasWinner = true;
+        }
+
+        if (
+          rows[0][0].textContent === turn &&
+          rows[1][1].textContent === turn &&
+          rows[2][2].textContent === turn
+        )
+          if (
+            rows[0][2].textContent === turn &&
+            rows[1][1].textContent === turn &&
+            rows[2][0].textContent === turn
+          ) {
+            hasWinner = true;
+          }
+
+        return hasWinner;
+      };
 
       const callback = (event) => {
         if (event.target.textContent) return;
         event.target.textContent = turn;
+
+        if (checkWinner(event.target)) {
+          $result.textContent = `${turn}님이 승리!`;
+          $table.removeEventListener("click", callback);
+          return;
+        }
+
+        let count = 0;
+        rows.forEach((row) => {
+          row.forEach((cell) => {
+            if (cell.textContent) {
+              count += 1;
+            }
+          });
+        });
+        if (count === 9) {
+          $result.textContent = `무승부`;
+          return;
+        }
+
         turn = turn === "O" ? "X" : "O";
       };
 
