@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>쿵쿵따 게임</title>
+  </head>
+  <body>
+    <h1>쿵쿵따 게임</h1>
+    <div><span id="order">1</span>번째 참가자</div>
+    <div>제시어 : <span id="word"></span></div>
+    <div><input type="text" id="text" /><button>입력</button></div>
+
+    <script>
+      const number = Number(prompt("몇명이 참가할까요?"));
+      if (number === 0) {
+        window.close();
+      } else {
+        const $order = document.querySelector("#order");
+        const $word = document.querySelector("#word");
+        const $input = document.querySelector("#text");
+        const $button = document.querySelector("button");
+        let word;
+        let newWord;
+
+        const onInput = (event) => {
+          newWord = event.target.value;
+        };
+
+        const onClick = () => {
+          if (newWord.length > 3) {
+            alert("세글자 이하로 입력하세요.");
+          } else {
+            if (!word || word[word.length - 1] === newWord[0]) {
+              word = newWord;
+              if (Number($order.textContent) + 1 > number) {
+                $order.textContent = "1";
+              } else {
+                $order.textContent = Number($order.textContent) + 1;
+              }
+              $word.textContent = word;
+            } else {
+              alert("입력이 잘못되었습니다.");
+            }
+          }
+          $input.value = "";
+          $input.focus();
+        };
+        $input.addEventListener("input", onInput);
+        $button.addEventListener("click", onClick);
+      }
+    </script>
+  </body>
+</html>
