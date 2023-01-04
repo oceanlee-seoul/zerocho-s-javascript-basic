@@ -27,16 +27,8 @@
       let turn = "O";
 
       const checkWinner = (target) => {
-        let rowIndex;
-        let cellIndex;
-        rows.forEach((row, ri) => {
-          row.forEach((cell, ci) => {
-            if (cell === target) {
-              rowIndex = ri;
-              cellIndex = ci;
-            }
-          });
-        });
+        const rowIndex = target.parentNode.rowIndex;
+        const cellIndex = target.cellIndex;
         let hasWinner = false;
         if (
           rows[rowIndex][0].textContent === turn &&
