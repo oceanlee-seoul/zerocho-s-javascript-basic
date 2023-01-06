@@ -68,8 +68,8 @@
         mine = parseInt(event.target.mine.value);
         openCount = 0;
         $tbody.innerHTML = "";
-        drawTable();
         startTime = new Date();
+        drawTable();
         interval = setInterval(() => {
           const time = Math.floor((new Date() - startTime) / 1000);
           $timer.textContent = `${time}초`;
