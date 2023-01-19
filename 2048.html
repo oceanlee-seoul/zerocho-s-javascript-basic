@@ -1,9 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
+<html>
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>2048</title>
     <style>
       #table {
@@ -31,19 +28,19 @@
       }
       .color-8 {
         background-color: #f3b27a;
-        color: white;
+        color: "white";
       }
       .color-16 {
         background-color: #f69664;
-        color: white;
+        color: "white";
       }
       .color-32 {
         background-color: #f77c5f;
-        color: white;
+        color: "white";
       }
       .color-64 {
         background-color: #f75f3b;
-        color: white;
+        color: "white";
       }
       .color-128 {
         background-color: #edd073;
@@ -69,12 +66,13 @@
   </head>
   <body>
     <table id="table"></table>
-    <div id="score"></div>
+    <div id="score">0</div>
     <script>
       const $table = document.getElementById("table");
       const $score = document.getElementById("score");
       let data = [];
 
+      // $table -> $fragment -> $tr -> $td
       function startGame() {
         const $fragment = document.createDocumentFragment();
         [1, 2, 3, 4].forEach(function () {
@@ -94,7 +92,7 @@
       }
 
       function put2ToRandomCell() {
-        const emptyCells = [];
+        const emptyCells = []; // [[i1, j1], [i2, j2], [i3, j3]]
         data.forEach(function (rowData, i) {
           rowData.forEach(function (cellData, j) {
             if (!cellData) {
@@ -102,7 +100,7 @@
             }
           });
         });
-
+        // randomCell === [i, j]
         const randomCell =
           emptyCells[Math.floor(Math.random() * emptyCells.length)];
         data[randomCell[0]][randomCell[1]] = 2;
@@ -125,6 +123,13 @@
 
       startGame();
 
+      // data = [
+      //   [32, 2, 4, 2],
+      //   [64, 4, 8, 4],
+      //   [2, 1024, 1024, 32],
+      //   [32, 16, 64, 4],
+      // ];
+      // draw();
       function moveCells(direction) {
         switch (direction) {
           case "left": {
@@ -132,9 +137,14 @@
             data.forEach((rowData, i) => {
               rowData.forEach((cellData, j) => {
                 if (cellData) {
+                  // newData = [2, 2, 4]
                   const currentRow = newData[i];
                   const prevData = currentRow[currentRow.length - 1];
                   if (prevData === cellData) {
+                    // 이전 값과 지금 값이 같으면
+                    const score = parseInt($score.textContent);
+                    $score.textContent =
+                      score + currentRow[currentRow.length - 1] * 2;
                     currentRow[currentRow.length - 1] *= -2;
                   } else {
                     newData[i].push(cellData);
@@ -158,6 +168,9 @@
                   const currentRow = newData[i];
                   const prevData = currentRow[currentRow.length - 1];
                   if (prevData === rowData[3 - j]) {
+                    const score = parseInt($score.textContent);
+                    $score.textContent =
+                      score + currentRow[currentRow.length - 1] * 2;
                     currentRow[currentRow.length - 1] *= -2;
                   } else {
                     newData[i].push(rowData[3 - j]);
@@ -181,6 +194,9 @@
                   const currentRow = newData[j];
                   const prevData = currentRow[currentRow.length - 1];
                   if (prevData === cellData) {
+                    const score = parseInt($score.textContent);
+                    $score.textContent =
+                      score + currentRow[currentRow.length - 1] * 2;
                     currentRow[currentRow.length - 1] *= -2;
                   } else {
                     newData[j].push(cellData);
@@ -204,6 +220,9 @@
                   const currentRow = newData[j];
                   const prevData = currentRow[currentRow.length - 1];
                   if (prevData === data[3 - i][j]) {
+                    const score = parseInt($score.textContent);
+                    $score.textContent =
+                      score + currentRow[currentRow.length - 1] * 2;
                     currentRow[currentRow.length - 1] *= -2;
                   } else {
                     newData[j].push(data[3 - i][j]);
@@ -220,6 +239,19 @@
             break;
           }
         }
+        if (data.flat().includes(2048)) {
+          // 승리
+          draw();
+          setTimeout(() => {
+            alert("축하합니다. 2048을 만들었습니다!");
+          }, 0);
+        } else if (!data.flat().includes(0)) {
+          // 빈 칸이 없으면 패배
+          alert(`패배했습니다... ${$score.textContent}점`);
+        } else {
+          put2ToRandomCell();
+          draw();
+        }
       }
 
       window.addEventListener("keyup", (event) => {
@@ -234,14 +266,14 @@
         }
       });
 
-      let startCord;
+      let startCoord;
       window.addEventListener("mousedown", (event) => {
-        startCord = [event.clientX, event.clientY];
+        startCoord = [event.clientX, event.clientY];
       });
       window.addEventListener("mouseup", (event) => {
-        const endCord = [event.clientX, event.clientY];
-        const diffX = endCord[0] - startCord[0];
-        const diffY = endCord[1] - startCord[1];
+        const endCoord = [event.clientX, event.clientY];
+        const diffX = endCoord[0] - startCoord[0];
+        const diffY = endCoord[1] - startCoord[1];
         if (diffX < 0 && Math.abs(diffX) > Math.abs(diffY)) {
           moveCells("left");
         } else if (diffX > 0 && Math.abs(diffX) > Math.abs(diffY)) {
